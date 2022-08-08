@@ -19,7 +19,7 @@ class User(db.Model):
         }
 
 class ClueAnswer(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     year = db.Column(db.Integer, unique=False, nullable=True)
     weekday = db.Column(db.String(3), unique=False, nullable=True)
     clue = db.Column(db.String(180), unique=False, nullable=True)
