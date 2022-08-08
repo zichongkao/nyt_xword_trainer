@@ -8,11 +8,16 @@ from api.utils import generate_sitemap, APIException
 api = Blueprint('api', __name__)
 
 
-@api.route('/hello', methods=['POST', 'GET'])
-def handle_hello():
+@api.route('/clue', methods=['GET'])
+def get_clue():
 
     response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
+        "clue": "Elvis' middle name?",
+        "answer": "Aron", 
+        "year": 2002,
+        "weekday": "Mon",
+        "total": "23",
+        "explanation": "Elvis Presley's full name was Elvis Aron Presley."
     }
 
     return jsonify(response_body), 200
