@@ -18,7 +18,7 @@ depends_on = None
 
 
 def upgrade():
-    filename = os.path.join(os.getenv("ROOT_PATH"), 'NYT Crossword_2009_2016.csv')
+    filename = os.path.join(os.getenv("ROOT_PATH"), 'data', 'NYT Crossword_2009_2016.csv')
     op.execute(f"""COPY clue_answer(year,weekday,clue,word,total,explanation) FROM '{filename}' DELIMITER ',' CSV HEADER QUOTE '"';""", execution_options=None)
     pass
 
