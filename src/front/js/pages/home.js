@@ -148,8 +148,25 @@ const renderInput = (answer) => {
 	}
 
 	const isFinalClue = store.current_clue_index == store.clue_list.length -1
+	const revealLetter = () => {
+		const firstBlankIdx = pinFieldRef.current.findIndex(i => (i.value === ""))
+		if (firstBlankIdx === -1) {return} else {
+			pinFieldRef.current[firstBlankIdx].value = answer[firstBlankIdx].toUpperCase();
+			const nextIdx = Math.min(answer.length, firstBlankIdx+1);
+			pinFieldRef.current[nextIdx].focus();
+		}
+	}
+	const renderRevealLetterButton = () => {
+		return store.current_clue_status == "unsubmitted" && 
+		    <button
+			  onClick={revealLetter}
+		  	  className="bg-gray-400 hover:bg-gray-500 hover:transition-colors py-1 px-3 rounded-lg mt-3 mr-3 text-white"
+			>
+				Reveal letter
+			</button>
+	}
 
-	const renderButton = () => {
+	const renderActionButton = () => {
 		return (store.current_clue_status == "unsubmitted" ?
         	<button 
 		  	  onClick={checkAnswer}
@@ -166,7 +183,6 @@ const renderInput = (answer) => {
 		    </button>
 		)
 	}
-	console.log('length', answer.length)
 	return (
 	  <div className="m-2">
 		<PinField
@@ -179,7 +195,8 @@ const renderInput = (answer) => {
 		  autoFocus
 		/>
 		<br/>
-		{renderButton()}
+		{renderRevealLetterButton()}
+		{renderActionButton()}
 	  </div>
 	)
 }
