@@ -13,12 +13,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			loadClueList: () => {
 				console.log('running loadClueList')
-				/*
 				fetch("/api/clue")
 					.then(resp => resp.json())
 					.then(data => {setStore({ clue_list: data.clue_list, round_score: 0, current_clue_index: 0, current_clue_status: "unsubmitted" })})
 					.catch(error => console.log("Error loading message from backend", error));
-					*/
+				/*
 				// For backend-less testing:
 				setStore({
 					clue_list: [
@@ -29,6 +28,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					current_clue_status: "unsubmitted",
 					round_score: 0
 				});
+				*/
 			},
 			incrementCurrentClueIndex: () => {
 				console.log('running incrementCurrentClueIndex');

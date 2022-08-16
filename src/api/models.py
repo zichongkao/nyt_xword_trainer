@@ -36,7 +36,7 @@ class ClueAnswer(db.Model):
             "year": self.year,
             "weekday": self.weekday,
             "clue": self.clue,
-            "word": self.word,
+            "answer": self.word,
             "total": self.total,
             "explanation": self.explanation
         }
