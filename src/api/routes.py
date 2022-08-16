@@ -12,12 +12,22 @@ api = Blueprint('api', __name__)
 def get_clue():
 
     response_body = {
-        "clue": "Elvis' middle name?",
-        "answer": "Aron", 
-        "year": 2002,
-        "weekday": "Mon",
-        "total": "23",
-        "explanation": "Elvis Presley's full name was Elvis Aron Presley."
+        "clue_list": [{
+            "clue": "Elvis' middle name?",
+            "answer": "Arono", 
+            "year": 2002,
+            "weekday": "Mon",
+            "total": "23",
+            "explanation": "Elvis Presley's full name was Elvis Aron Presley."
+        }, {
+            "clue": "Two Elvis' middle name?",
+            "answer": "TwoAron", 
+            "year": 2202,
+            "weekday": "Tues",
+            "total": "24",
+            "explanation": "Two Elvis Presley's full name was Elvis Aron Presley."
+        }]
     }
+    print(response_body)
 
     return jsonify(response_body), 200
