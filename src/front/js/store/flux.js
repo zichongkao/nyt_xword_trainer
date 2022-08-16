@@ -5,20 +5,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 			current_clue_index: 0, // integer between 0 and len(clue_list)-1 recording index of clue in play.
 			current_clue_status: "unsubmitted", // one of {"unsubmitted", "correct", "wrong"}
 			clue_list: [],
+			is_loading: false,
+			// Round Settings
+			start_year: 2015,
+			round_size: 30,
+			top_x_answers: 200,
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
 			loadClueList: () => {
 				console.log('running loadClueList')
-				fetch("/api/clue")
+				setStore({is_loading: true})
+				const store = getStore();
+				const queryString = new URLSearchParams({
+					round_size: store.round_size,
+					start_year: store.start_year,
+					top_x_answers: store.top_x_answers,
+				})
+				fetch("/api/clue?" + queryString)
 					.then(resp => resp.json())
-					.then(data => {setStore({ clue_list: data.clue_list, round_score: 0, current_clue_index: 0, current_clue_status: "unsubmitted" })})
+					.then(data => {setStore({ is_loading: false, clue_list: data.clue_list, round_score: 0, current_clue_index: 0, current_clue_status: "unsubmitted" })})
 					.catch(error => console.log("Error loading message from backend", error));
-				/*
 				// For backend-less testing:
+				/*
 				setStore({
 					clue_list: [
 						{answer: 'Aron', clue: "Elvis' middle name?", explanation: "Elvis Presley's full name was Elvis Aron Presley.", total: '23', weekday: 'Mon', year: '2022'},
@@ -48,20 +57,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const store = getStore();
 				setStore({round_score: store.round_score +1})
 			},
-
-			changeColor: (index, color) => {
-				//get the store
+			setStartYear: (start_year) => {
 				const store = getStore();
-
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
-
-				//reset the global store
-				setStore({ demo: demo });
+				setStore({ start_year })
+			},
+			setRoundSize: (round_size) => {
+				const store = getStore();
+				setStore({ round_size })
+			},
+			setTopXAnswers: (top_x_answers) => {
+				const store = getStore();
+				setStore({ top_x_answers })
 			}
 		}
 	};

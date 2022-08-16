@@ -2,27 +2,109 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/home.scss";
 import PinField from "react-pin-field";
-import { ImCross, ImCheckmark } from "react-icons/im"
+import { ImCross, ImCheckmark, ImCircleUp, ImCircleDown } from "react-icons/im"
 
 
 export const Home = () => {
 	const { store, actions } = useContext(Context);
 	console.log(store.clue_list);
 	return (
-		<div className="text-center mt-5">
-			<p className="font-bold text-lg">Score: {store.round_score} out of {store.clue_list.length}</p>
+		<div className="text-center mt-2 max-w-xl">
+			<p className="font-bold text-lg">Score: {store.round_score} / {store.clue_list.length}</p>
 			<div className="bg-white shadow overflow-hidden sm:rounded-lg m-10">
 				{renderClueDetails(store.clue_list[store.current_clue_index])}
+			</div>
+			<div className="bg-white shadow overflow-hidden sm:rounded-lg m-10">
+				{renderSettings()}
 			</div>
 		</div>
 	);
 };
 
+const renderSettings = () => {
+	const { store, actions } = useContext(Context);
+	const resetRound = () => {
+		actions.loadClueList();
+	}
+	return (
+		<div>
+  		<div className="font-semibold text-lg mt-3">Settings</div>
+		<div class="ml-6 mr-6 mb-6 mt-2">
+		<form>
+			<div className="mt-2">
+				<div className="relative">
+				  <span className="absolute -bottom-4 left-0 font-light text-sm">10</span>
+            	  <label for="top_x_answers" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+					Selection: <span className="font-light">{store.top_x_answers} most common answers</span>
+				  </label>
+				  <span className="absolute -bottom-4 right-0 font-light text-sm">1000</span>
+				</div>
+				<input
+				  id="top_x_answers"
+				  type="range"
+				  min="10"
+				  max="1000"
+				  step="10"
+				  value={store.top_x_answers}
+				  onInput={e => actions.setTopXAnswers(e.target.value)}
+				  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+        	</div>
+			<div className="mt-2">
+				<div className="relative">
+				  <span className="absolute -bottom-4 left-0 font-light text-sm">10</span>
+            	  <label for="round_size" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+					Round size: <span className="font-light">{store.round_size} clues</span>
+				  </label>
+				  <span className="absolute -bottom-4 right-0 font-light text-sm">100</span>
+				</div>
+				<input
+				  id="round_size"
+				  type="range"
+				  min="10"
+				  max="100"
+				  step="10"
+				  onInput={e => actions.setRoundSize(e.target.value)}
+				  value={store.round_size}
+				  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+        	</div>
+			<div className="mt-2">
+				<div className="relative">
+				  <span className="absolute -bottom-4 left-0 font-light text-sm">2010</span>
+				  <label for="start_year" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+					Start year: <span className="font-light">{store.start_year}</span>
+				  </label>
+				  <span className="absolute -bottom-4 right-0 font-light text-sm">2022</span>
+				</div>
+				<input
+				  id="start_year"
+				  type="range"
+				  min="2010"
+				  max="2022"
+				  onInput={e => actions.setStartYear(e.target.value)}
+				  value={store.start_year}
+				  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+			</div>
+		</form>
+       	<button 
+		  onClick={resetRound}
+		  className="bg-blue-600 hover:bg-blue-700 hover:transition-colors py-1 px-3 rounded-lg mt-3 text-white"
+		>	
+			Draw new clues
+		</button>
+		</div>
+		</div>
+	)
+}
+
 const renderClueDetails = (clueDetails) => {
 	const { store, actions } = useContext(Context);
-	console.log(JSON.stringify(clueDetails))
-	return clueDetails !== undefined && (
-		<div className="border-t border-gray-200">
+	console.log('Rendering clueDetails', JSON.stringify(clueDetails));
+	return clueDetails === undefined ? 
+	    <div className="m-3">
+        	<p className="font-semibold text-lg mt-3">{ store.is_loading ? "Loading... " : "No clues match the criteria"}</p>
+		</div>
+	    :
+		<div>
           <p className="font-semibold text-lg mt-3">{clueDetails.clue}</p>
           <p className="font-thin">{clueDetails.weekday}, {clueDetails.year}</p>
 		  {renderInput(clueDetails.answer)}
@@ -36,7 +118,6 @@ const renderClueDetails = (clueDetails) => {
 		      <span className="font-thin ml-3">{clueDetails.explanation}</span>
 			</div>}
 		</div>
-	)
 }
 
 const renderInput = (answer) => {
