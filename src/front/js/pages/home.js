@@ -196,7 +196,8 @@ const renderInput = (answer) => {
 		:
 		    <button
 		      onClick={goNext}
-		      className="bg-gray-600 hover:bg-gray-700 hover:transition-colors py-1 px-3 rounded-lg mt-3 text-white"
+		      className="bg-gray-400 hover:bg-gray-500 hover:transition-colors py-1 px-3 rounded-lg mt-3 text-white"
+			  autofocus
 		    >
 			    {isFinalClue ? "Next Round" : "Next"}
 		    </button>
