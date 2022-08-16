@@ -23,9 +23,10 @@ class ClueAnswer(db.Model):
     year = db.Column(db.Integer, unique=False, nullable=True)
     weekday = db.Column(db.String(3), unique=False, nullable=True)
     clue = db.Column(db.String(180), unique=False, nullable=True)
-    word = db.Column(db.String(64), unique=False, nullable=True)
-    total = db.Column(db.Integer, unique=False, nullable=True)
+    answer = db.Column(db.String(64), unique=False, nullable=True)
     explanation = db.Column(db.String(2000), unique=False, nullable=True)
+    answer_count = db.Column(db.Integer, unique=False, nullable=True)
+    answer_rank = db.Column(db.Integer, unique=False, nullable=True)
 
     def __repr__(self):
         return '<ClueAnswer %r>' % self.id
@@ -36,7 +37,8 @@ class ClueAnswer(db.Model):
             "year": self.year,
             "weekday": self.weekday,
             "clue": self.clue,
-            "answer": self.word,
-            "total": self.total,
-            "explanation": self.explanation
+            "answer": self.answer,
+            "explanation": self.explanation,
+            "answer_count": self.answer_count,
+            "answer_rank": self.answer_rank,
         }

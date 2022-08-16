@@ -23,9 +23,10 @@ def upgrade():
     sa.Column('year', sa.Integer(), nullable=True),
     sa.Column('weekday', sa.String(length=3), nullable=True),
     sa.Column('clue', sa.String(length=180), nullable=True),
-    sa.Column('word', sa.String(length=64), nullable=True),
-    sa.Column('total', sa.Integer(), nullable=True),
+    sa.Column('answer', sa.String(length=64), nullable=True),
     sa.Column('explanation', sa.String(length=2000), nullable=True),
+    sa.Column('answer_count', sa.Integer(), nullable=True),
+    sa.Column('answer_rank', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

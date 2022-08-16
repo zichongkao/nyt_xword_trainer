@@ -29,12 +29,12 @@ const renderSettings = () => {
 	return (
 		<div>
   		<div className="font-semibold text-lg mt-3">Settings</div>
-		<div class="ml-6 mr-6 mb-6 mt-2">
+		<div className="ml-6 mr-6 mb-6 mt-2">
 		<form>
 			<div className="mt-2">
 				<div className="relative">
 				  <span className="absolute -bottom-4 left-0 font-light text-sm">10</span>
-            	  <label for="top_x_answers" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+            	  <label htmlFor="top_x_answers" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
 					Selection: <span className="font-light">{store.top_x_answers} most common answers</span>
 				  </label>
 				  <span className="absolute -bottom-4 right-0 font-light text-sm">1000</span>
@@ -47,12 +47,13 @@ const renderSettings = () => {
 				  step="10"
 				  value={store.top_x_answers}
 				  onInput={e => actions.setTopXAnswers(e.target.value)}
-				  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+				  onChange={e => actions.setTopXAnswers(e.target.value)}
+				  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
         	</div>
 			<div className="mt-2">
 				<div className="relative">
 				  <span className="absolute -bottom-4 left-0 font-light text-sm">10</span>
-            	  <label for="round_size" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+            	  <label htmlFor="round_size" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
 					Round size: <span className="font-light">{store.round_size} clues</span>
 				  </label>
 				  <span className="absolute -bottom-4 right-0 font-light text-sm">100</span>
@@ -64,13 +65,14 @@ const renderSettings = () => {
 				  max="100"
 				  step="10"
 				  onInput={e => actions.setRoundSize(e.target.value)}
+				  onChange={e => actions.setRoundSize(e.target.value)}
 				  value={store.round_size}
-				  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+				  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
         	</div>
 			<div className="mt-2">
 				<div className="relative">
 				  <span className="absolute -bottom-4 left-0 font-light text-sm">2010</span>
-				  <label for="start_year" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+				  <label htmlFor="start_year" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
 					Start year: <span className="font-light">{store.start_year}</span>
 				  </label>
 				  <span className="absolute -bottom-4 right-0 font-light text-sm">2022</span>
@@ -81,8 +83,9 @@ const renderSettings = () => {
 				  min="2010"
 				  max="2022"
 				  onInput={e => actions.setStartYear(e.target.value)}
+				  onChange={e => actions.setStartYear(e.target.value)}
 				  value={store.start_year}
-				  class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+				  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
 			</div>
 		</form>
        	<button 
@@ -104,8 +107,8 @@ const renderClueDetails = (clueDetails) => {
         	<p className="font-semibold text-lg mt-3">{ store.is_loading ? "Loading... " : "No clues match the criteria"}</p>
 		</div>
 	    :
-		<div>
-          <p className="font-semibold text-lg mt-3">{clueDetails.clue}</p>
+		<div className="m-3">
+          <p className="font-semibold text-lg">{clueDetails.clue}</p>
           <p className="font-thin">{clueDetails.weekday}, {clueDetails.year}</p>
 		  {renderInput(clueDetails.answer)}
 		  {store.current_clue_status !== "unsubmitted" && 

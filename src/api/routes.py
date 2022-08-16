@@ -18,7 +18,11 @@ def get_clues():
     round_size = args.get("round_size", default=30, type=int)
     top_x_answers = args.get("top_x_answers", default=200, type=int)
 
-    res = ClueAnswer.query.filter(ClueAnswer.year>=start_year).order_by(func.random()).limit(round_size).all()
+    res = ClueAnswer.query.filter(ClueAnswer.year >= start_year)\
+        .filter(ClueAnswer.answer_rank <= top_x_answers)\
+        .order_by(func.random())\
+        .limit(round_size)\
+        .all()
     response_body = {
         "clue_list": [clue.serialize() for clue in res]
     }

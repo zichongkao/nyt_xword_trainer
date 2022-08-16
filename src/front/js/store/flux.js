@@ -15,7 +15,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// Use getActions to call a function within a fuction
 			loadClueList: () => {
 				console.log('running loadClueList')
-				/*
 				setStore({is_loading: true})
 				const store = getStore();
 				const queryString = new URLSearchParams({
@@ -27,17 +26,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 					.then(resp => resp.json())
 					.then(data => {setStore({ is_loading: false, clue_list: data.clue_list, round_score: 0, current_clue_index: 0, current_clue_status: "unsubmitted" })})
 					.catch(error => console.log("Error loading message from backend", error));
-				*/
+				/*
 				// For backend-less testing:
 				setStore({
 					clue_list: [
-						{answer: 'Aron', clue: "Elvis' middle name?", explanation: "Elvis Presley's full name was Elvis Aron Presley.", total: '23', weekday: 'Mon', year: '2022'},
-						{answer: 'TwoAron', clue: "Two Elvis' middle name?", explanation: "Two Elvis Presley's full name was Elvis Aron Presley.", total: '24', weekday: 'Tues', year: '2023'},
+						{answer: 'Aron', clue: "Elvis' middle name?", explanation: "Elvis Presley's full name was Elvis Aron Presley.", answer_count: '23', answer_rank: '2', weekday: 'Mon', year: '2022'},
+						{answer: 'TwoAron', clue: "Two Elvis' middle name?", explanation: "Two Elvis Presley's full name was Elvis Aron Presley.", answer_count: '24', answer_rank: '1', weekday: 'Tues', year: '2023'},
 					],
 					current_clue_index: 0,
 					current_clue_status: "unsubmitted",
 					round_score: 0
 				});
+				*/
 			},
 			incrementCurrentClueIndex: () => {
 				console.log('running incrementCurrentClueIndex');
