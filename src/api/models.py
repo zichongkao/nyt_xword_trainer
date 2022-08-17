@@ -21,10 +21,12 @@ class User(db.Model):
 class ClueAnswer(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     year = db.Column(db.Integer, unique=False, nullable=True)
-    weekday = db.Column(db.String(3), unique=False, nullable=True)
-    clue = db.Column(db.String(180), unique=False, nullable=True)
+    month = db.Column(db.Integer, unique=False, nullable=True)
+    day = db.Column(db.Integer, unique=False, nullable=True)
+    weekday = db.Column(db.Integer, unique=False, nullable=True)
+    clue = db.Column(db.String(240), unique=False, nullable=True)
     answer = db.Column(db.String(64), unique=False, nullable=True)
-    explanation = db.Column(db.String(2000), unique=False, nullable=True)
+    index = db.Column(db.String(12), unique=False, nullable=True)
     answer_count = db.Column(db.Integer, unique=False, nullable=True)
     answer_rank = db.Column(db.Integer, unique=False, nullable=True)
 
@@ -35,10 +37,12 @@ class ClueAnswer(db.Model):
         return {
             "id": self.id,
             "year": self.year,
+            "month": self.month,
+            "day": self.day,
             "weekday": self.weekday,
             "clue": self.clue,
             "answer": self.answer,
-            "explanation": self.explanation,
+            "index": self.index,
             "answer_count": self.answer_count,
             "answer_rank": self.answer_rank,
         }

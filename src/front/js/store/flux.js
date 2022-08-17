@@ -7,8 +7,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			clue_list: [],
 			is_loading: false,
 			// Round Settings
-			start_year: 2015,
-			round_size: 30,
+			start_year: 2010,
+			round_size: 10,
 			top_x_answers: 200,
 		},
 		actions: {
@@ -30,8 +30,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				// For backend-less testing:
 				setStore({
 					clue_list: [
-						{answer: 'Aron', clue: "Elvis' middle name?", explanation: "Elvis Presley's full name was Elvis Aron Presley.", answer_count: '23', answer_rank: '2', weekday: 'Mon', year: '2022'},
-						{answer: 'TwoAron', clue: "Two Elvis' middle name?", explanation: "Two Elvis Presley's full name was Elvis Aron Presley.", answer_count: '24', answer_rank: '1', weekday: 'Tues', year: '2023'},
+						{answer: 'Aron', clue: "Elvis' middle name?", answer_count: '20', answer_rank: '2',
+						 index: '1-ACROSS', weekday: 'Mon', year: '2022', month: '1', day:'2'},
+						{answer: 'TwoAron', clue: "Two Elvis' middle name?", answer_count: '24', answer_rank: '1',
+						 index: '2-DOWN', weekday: 'Tues', year: '2023', month: '1', day:'2'},
 					],
 					current_clue_index: 0,
 					current_clue_status: "unsubmitted",

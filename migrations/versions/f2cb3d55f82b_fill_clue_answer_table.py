@@ -18,8 +18,8 @@ depends_on = None
 
 
 def upgrade():
-    filename = os.path.join(os.getenv("ROOT_PATH"), 'data', 'NYT Crossword_2009_2016_processed.csv')
-    op.execute(f"""COPY clue_answer(year,weekday,clue,answer,explanation,answer_count,answer_rank) FROM '{filename}' DELIMITER ',' CSV HEADER QUOTE '"';""", execution_options=None)
+    filename = os.path.join(os.getenv("ROOT_PATH"), 'data', 'bydatestore_xwordinfo_processed.csv')
+    op.execute(f"""COPY clue_answer(year,month,day,weekday,clue,answer,index,answer_count,answer_rank) FROM '{filename}' DELIMITER ',' CSV HEADER QUOTE '"';""", execution_options=None)
     pass
 
 

@@ -5,6 +5,7 @@ import PinField from "react-pin-field";
 import { ImCross, ImCheckmark, ImCircleUp, ImCircleDown } from "react-icons/im"
 
 
+
 export const Home = () => {
 	const { store, actions } = useContext(Context);
 	console.log(store.clue_list);
@@ -37,33 +38,33 @@ const renderSettings = () => {
             	  <label htmlFor="top_x_answers" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
 					Selection: <span className="font-light">{store.top_x_answers} most common answers</span>
 				  </label>
-				  <span className="absolute -bottom-4 right-0 font-light text-sm">1000</span>
+				  <span className="absolute -bottom-4 right-0 font-light text-sm">10,000</span>
 				</div>
-				<input
+				<input // Log scale
 				  id="top_x_answers"
 				  type="range"
-				  min="10"
-				  max="1000"
-				  step="10"
-				  value={store.top_x_answers}
-				  onInput={e => actions.setTopXAnswers(e.target.value)}
-				  onChange={e => actions.setTopXAnswers(e.target.value)}
+				  min="1" // ie. 10
+				  max="4" // ie. 10,000
+				  step="1" // This is one order of magnitude
+				  value={Math.log10(store.top_x_answers)}
+				  onInput={e => actions.setTopXAnswers(Math.floor(10**e.target.value))}
+				  onChange={e => actions.setTopXAnswers(Math.floor(10**e.target.value))}
 				  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
         	</div>
 			<div className="mt-2">
 				<div className="relative">
-				  <span className="absolute -bottom-4 left-0 font-light text-sm">10</span>
+				  <span className="absolute -bottom-4 left-0 font-light text-sm">5</span>
             	  <label htmlFor="round_size" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
 					Round size: <span className="font-light">{store.round_size} clues</span>
 				  </label>
-				  <span className="absolute -bottom-4 right-0 font-light text-sm">100</span>
+				  <span className="absolute -bottom-4 right-0 font-light text-sm">30</span>
 				</div>
 				<input
 				  id="round_size"
 				  type="range"
-				  min="10"
-				  max="100"
-				  step="10"
+				  min="5"
+				  max="30"
+				  step="5"
 				  onInput={e => actions.setRoundSize(e.target.value)}
 				  onChange={e => actions.setRoundSize(e.target.value)}
 				  value={store.round_size}
@@ -71,7 +72,7 @@ const renderSettings = () => {
         	</div>
 			<div className="mt-2">
 				<div className="relative">
-				  <span className="absolute -bottom-4 left-0 font-light text-sm">2010</span>
+				  <span className="absolute -bottom-4 left-0 font-light text-sm">1993</span>
 				  <label htmlFor="start_year" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
 					Start year: <span className="font-light">{store.start_year}</span>
 				  </label>
@@ -80,7 +81,7 @@ const renderSettings = () => {
 				<input
 				  id="start_year"
 				  type="range"
-				  min="2010"
+				  min="1993"
 				  max="2022"
 				  onInput={e => actions.setStartYear(e.target.value)}
 				  onChange={e => actions.setStartYear(e.target.value)}
@@ -116,6 +117,16 @@ const renderClueDetails = (clueDetails) => {
 		return i + "th";
 	}
 
+	const weekday_names = {
+		1: 'Monday',
+		2: 'Tuesday',
+		3: 'Wednesday',
+		4: 'Thursday',
+		5: 'Friday',
+		6: 'Saturday',
+		7: 'Sunday'
+	};
+
 	console.log('Rendering clueDetails', JSON.stringify(clueDetails));
 	return clueDetails === undefined ? 
 	    <div className="m-3">
@@ -124,7 +135,7 @@ const renderClueDetails = (clueDetails) => {
 	    :
 		<div className="m-3">
           <p className="font-semibold text-lg">{clueDetails.clue}</p>
-          <p className="font-thin">{clueDetails.weekday}, {clueDetails.year}</p>
+          <p className="font-thin">{weekday_names[clueDetails.weekday]}, {clueDetails.year}</p>
 		  {renderInput(clueDetails.answer)}
 		  {store.current_clue_status !== "unsubmitted" && 
 		    <div className="m-3">
@@ -133,7 +144,8 @@ const renderClueDetails = (clueDetails) => {
 			    {store.current_clue_status == "wrong" && <ImCross className="fill-red-400 w-10 inline" />}
 				{clueDetails.answer}
 			  </span>	
-		      <span className="font-thin ml-3">{clueDetails.explanation}</span>
+		      <span className="font-thin ml-3">Clue from {clueDetails.year}-{String(clueDetails.month).padStart(2, '0')}-{String(clueDetails.day).padStart(2, '0')},</span>
+			  <span className="font-thin ml-3">{clueDetails.index}</span>
 			  <br />
 			  <span className="font-thin ml-3">{addOrdinalSuffix(clueDetails.answer_rank)} most common answer</span>
 			</div>}
@@ -172,7 +184,7 @@ const renderInput = (answer) => {
 		const firstBlankIdx = pinFieldRef.current.findIndex(i => (i.value === ""))
 		if (firstBlankIdx === -1) {return} else {
 			pinFieldRef.current[firstBlankIdx].value = answer[firstBlankIdx].toUpperCase();
-			const nextIdx = Math.min(answer.length, firstBlankIdx+1);
+			const nextIdx = Math.min(answer.length-1, firstBlankIdx+1);
 			pinFieldRef.current[nextIdx].focus();
 		}
 	}
