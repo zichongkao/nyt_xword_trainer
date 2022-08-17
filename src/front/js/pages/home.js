@@ -134,7 +134,8 @@ const renderClueDetails = (clueDetails) => {
 				{clueDetails.answer}
 			  </span>	
 		      <span className="font-thin ml-3">{clueDetails.explanation}</span>
-			  <span className="font-thin ml-3">({addOrdinalSuffix(clueDetails.answer_rank)} most common answer)</span>
+			  <br />
+			  <span className="font-thin ml-3">{addOrdinalSuffix(clueDetails.answer_rank)} most common answer</span>
 			</div>}
 		</div>
 }
