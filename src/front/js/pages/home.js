@@ -7,13 +7,13 @@ import Slider from '@mui/material/Slider';
 
 /* Utils */
 const weekday_names = {
-	1: 'Monday',
-	2: 'Tuesday',
-	3: 'Wednesday',
-	4: 'Thursday',
-	5: 'Friday',
-	6: 'Saturday',
-	7: 'Sunday'
+	0: 'Monday',
+	1: 'Tuesday',
+	2: 'Wednesday',
+	3: 'Thursday',
+	4: 'Friday',
+	5: 'Saturday',
+	6: 'Sunday',
 };
 
 const addOrdinalSuffix = (i) => {
@@ -53,7 +53,7 @@ const renderSettings = () => {
 		actions.loadClueList();
 	}
 	function valuetext(value) {
-		return `${value}°C`;
+		return `${10**value} most common answer`;
 	}
 	const marks = [
 		{
@@ -99,10 +99,6 @@ const renderSettings = () => {
 			actions.setMaxAnswerRank(10**(newValue[1]))
 		}
 	  };
-
-	function calculateValue(value) {
-		return 10 ** value;
-	}
 
 	return (
 		<div>
@@ -170,10 +166,11 @@ const renderClueDetails = (clueDetails) => {
 		  {store.current_clue_status !== "unsubmitted" && 
 		    <div className="mt-3 mb-3 mr-2 ml-2">
 			  <span className="font-semibold">
-			    {store.current_clue_status == "correct" && <ImCheckmark className="fill-green-400 w-10 inline"/>}
-			    {store.current_clue_status == "wrong" && <ImCross className="fill-red-400 w-10 inline" />}
+			    {store.current_clue_status == "correct" && <ImCheckmark className="fill-green-400 w-5 inline"/>}
+			    {store.current_clue_status == "wrong" && <ImCross className="fill-red-400 w-5 inline" />}
 				{clueDetails.answer}
 			  </span>	
+			  <br />
 		      <span className="font-thin ml-3">{clueDetails.year}-{String(clueDetails.month).padStart(2, '0')}-{String(clueDetails.day).padStart(2, '0')}, {clueDetails.index}</span>
 			  <br />
 			  <span className="font-thin ml-3">{addOrdinalSuffix(clueDetails.answer_rank)} most common answer</span>
@@ -184,6 +181,7 @@ const renderClueDetails = (clueDetails) => {
 const renderInput = (answer) => {
 	const { store, actions } = useContext(Context);
 	const pinFieldRef = React.createRef();
+	const isFinalClue = store.current_clue_index == store.clue_list.length -1
 	console.log(store)
 
 	const clearInput = () => {
@@ -192,8 +190,12 @@ const renderInput = (answer) => {
 
 	const goNext = () => {
 		clearInput();
-		actions.incrementCurrentClueIndex();
-		actions.setCurrentClueStatus("unsubmitted");
+		if (isFinalClue) {
+			actions.loadClueList();
+		} else {
+			actions.incrementCurrentClueIndex();
+			actions.setCurrentClueStatus("unsubmitted");
+		}
 	}
 
 	const checkAnswer = () => {
@@ -209,7 +211,6 @@ const renderInput = (answer) => {
 		}
 	}
 
-	const isFinalClue = store.current_clue_index == store.clue_list.length -1
 	const revealLetter = () => {
 		const firstBlankIdx = pinFieldRef.current.findIndex(i => (i.value === ""))
 		if (firstBlankIdx === -1) {return} else {
