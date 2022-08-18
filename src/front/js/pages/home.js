@@ -148,21 +148,21 @@ const renderClueDetails = (clueDetails) => {
 		</div>
 	    :
 		<div className="m-3">
-		  <div className="mt-2 flex">
+		  <div className="mt-2 flex justify-between">
 			<div className="">
 			  <span className="font-bold text-xl text-gray-400">Clue {store.current_clue_index+1}</span>
 			  <span className="font-normal text-gray-400"> of 10</span>
 			</div>
-		  </div>
-		  <div className="flex">
-			<div>
-			  <ImCheckmark className="fill-green-400 w-5 inline scale-75"/>
-			  <span className="text-sm text-gray-400">{store.correct}</span>
-			</div>
-			<div className="ml-1">
-			  <ImCross className="fill-red-400 w-5 inline scale-75"/>
-			  <span className="text-sm text-gray-400">{store.wrong}</span>
-			</div>
+		    <div className="flex items-center">
+			  <div>
+			    <ImCheckmark className="fill-green-400 w-5 inline"/>
+			    <span className="text-gray-400">{store.correct}</span>
+			  </div>
+			  <div className="ml-2">
+			    <ImCross className="fill-red-400 w-5 inline"/>
+			    <span className="text-gray-400">{store.wrong}</span>
+			  </div>
+		    </div>
 		  </div>
           <p className="font-semibold text-xl">{clueDetails.clue}</p>
           <p className="font-thin">{weekday_names[clueDetails.weekday]}, {clueDetails.year}</p>
