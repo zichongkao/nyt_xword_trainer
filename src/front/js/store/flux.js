@@ -1,32 +1,32 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			round_score: 0, // correct answers in the current round.
+			correct: 0, // correct answers in the current round.
+			wrong: 0, // wrong answers in the current round.
 			current_clue_index: 0, // integer between 0 and len(clue_list)-1 recording index of clue in play.
 			current_clue_status: "unsubmitted", // one of {"unsubmitted", "correct", "wrong"}
 			clue_list: [],
 			is_loading: false,
 			// Round Settings
-			start_year: 2010,
-			round_size: 10,
-			top_x_answers: 200,
+			round_size: 10, // tracked here, but can't be changed anywhere.
+			min_answer_rank: 1,
+			max_answer_rank: 10,
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
 			loadClueList: () => {
-				console.log('running loadClueList')
 				setStore({is_loading: true})
 				const store = getStore();
 				const queryString = new URLSearchParams({
-					round_size: store.round_size,
-					start_year: store.start_year,
-					top_x_answers: store.top_x_answers,
+					round_size: 10,
+					min_answer_rank: store.min_answer_rank,
+					max_answer_rank: store.max_answer_rank,
 				})
 				fetch("/api/clue?" + queryString)
 					.then(resp => resp.json())
-					.then(data => {setStore({ is_loading: false, clue_list: data.clue_list, round_score: 0, current_clue_index: 0, current_clue_status: "unsubmitted" })})
+					.then(data => {setStore({ is_loading: false, clue_list: data.clue_list, correct: 0, wrong: 0, current_clue_index: 0, current_clue_status: "unsubmitted" })})
 					.catch(error => console.log("Error loading message from backend", error));
-				/*
+				/*	
 				// For backend-less testing:
 				setStore({
 					clue_list: [
@@ -37,39 +37,37 @@ const getState = ({ getStore, getActions, setStore }) => {
 					],
 					current_clue_index: 0,
 					current_clue_status: "unsubmitted",
-					round_score: 0
+					correct: 0,
+					wrong: 0
 				});
 				*/
 			},
 			incrementCurrentClueIndex: () => {
-				console.log('running incrementCurrentClueIndex');
 				const store = getStore();
 				const potential_next = store.current_clue_index + 1;
 				// Don't increment if we are at the end of the list.
 				potential_next < store.clue_list.length && setStore({current_clue_index: potential_next});
 			},
 			setCurrentClueStatus: (new_status) => {
-				console.log('running setCurrentClueStatus');
 				// should assert to be one of {"unsubmitted", "correct", "wrong"}
 				const store = getStore();
 				setStore({current_clue_status: new_status})
 			},
-			incrementScore: () => {
-				console.log('running incrementScore');
+			incrementCorrect: () => {
 				const store = getStore();
-				setStore({round_score: store.round_score +1})
+				setStore({correct: store.correct +1})
 			},
-			setStartYear: (start_year) => {
+			incrementWrong: () => {
 				const store = getStore();
-				setStore({ start_year })
+				setStore({wrong: store.wrong +1})
 			},
-			setRoundSize: (round_size) => {
+			setMinAnswerRank: (min_answer_rank) => {
 				const store = getStore();
-				setStore({ round_size })
+				setStore({ min_answer_rank })
 			},
-			setTopXAnswers: (top_x_answers) => {
+			setMaxAnswerRank: (max_answer_rank) => {
 				const store = getStore();
-				setStore({ top_x_answers })
+				setStore({ max_answer_rank })
 			}
 		}
 	};

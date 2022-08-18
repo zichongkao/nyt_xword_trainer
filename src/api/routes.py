@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-import random
+from random import sample
 from api.models import db, User, ClueAnswer
 from api.utils import generate_sitemap, APIException
 from sqlalchemy.sql.expression import func
@@ -14,15 +14,19 @@ api = Blueprint('api', __name__)
 @api.route('/clue', methods=['GET'])
 def get_clues():
     args = request.args
-    start_year = args.get("start_year", default=2015, type=int)
-    round_size = args.get("round_size", default=30, type=int)
-    top_x_answers = args.get("top_x_answers", default=200, type=int)
+    round_size = args.get("round_size", default=10, type=int)
+    min_answer_rank = args.get("min_answer_rank", default=1, type=int)
+    max_answer_rank = args.get("max_answer_rank", default=10, type=int)
 
-    res = ClueAnswer.query.filter(ClueAnswer.year >= start_year)\
-        .filter(ClueAnswer.answer_rank <= top_x_answers)\
-        .order_by(func.random())\
-        .limit(round_size)\
-        .all()
+    # Two queries, but faster than "ORDER BY random()"
+    possible_ids = [x[0] for x in ClueAnswer.query\
+        .filter(ClueAnswer.answer_rank >= min_answer_rank)\
+        .filter(ClueAnswer.answer_rank <= max_answer_rank)\
+        .with_entities(ClueAnswer.id)\
+        .all()]
+    actual_ids = possible_ids if round_size >= len(possible_ids) else sample(possible_ids, round_size)
+    res = ClueAnswer.query.filter(ClueAnswer.id.in_(actual_ids)).all()
+
     response_body = {
         "clue_list": [clue.serialize() for clue in res]
     }
@@ -31,18 +35,24 @@ def get_clues():
     response_body = {
         "clue_list": [{
             "clue":"\"___ Baba and the 40 Thieves\"",
-            "explanation":"\"Ali Baba and the Forty Thieves\" is a film released in 1944 directed by Arthur Lubin. It is very loosely based on the tale of Ali Baba from the book \"One Thousand and One Nights\", a collection of Arabic stories compiled in what is termed the Islamic Golden Age (the 8th to 13th centuries AD). In English we often refer to the collection as \"The Arabian Nights\".",
-            "total":96,
+            "answer_rank":21,
+            "answer_count":23,
             "weekday":"Mon",
             "answer":"ALI",
-            "year":2010
+            "index":"2-DOWN",
+            "year":2010,
+            "month":12,
+            "day":20
         }, {
             "clue": "Two Elvis' middle name?",
+            "answer_rank":212,
+            "answer_count":232,
             "answer": "TwoAron", 
-            "year": 2202,
             "weekday": "Tues",
-            "total": "24",
-            "explanation": "Two Elvis Presley's full name was Elvis Aron Presley."
+            "index":"2-DOWN",
+            "year":2012,
+            "month":11,
+            "day":22
         }]
     }
     print(response_body)

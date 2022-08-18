@@ -2,22 +2,47 @@ import React, { useContext } from "react";
 import { Context } from "../store/appContext";
 import "../../styles/home.scss";
 import PinField from "react-pin-field";
-import { ImCross, ImCheckmark, ImCircleUp, ImCircleDown } from "react-icons/im"
+import { ImCross, ImCheckmark, ImDrawer } from "react-icons/im"
+import Slider from '@mui/material/Slider';
 
+/* Utils */
+const weekday_names = {
+	1: 'Monday',
+	2: 'Tuesday',
+	3: 'Wednesday',
+	4: 'Thursday',
+	5: 'Friday',
+	6: 'Saturday',
+	7: 'Sunday'
+};
 
+const addOrdinalSuffix = (i) => {
+	var j = i % 10,
+		k = i % 100;
+	if (j == 1 && k != 11) {
+		return i + "st";
+	}
+	if (j == 2 && k != 12) {
+		return i + "nd";
+	}
+	if (j == 3 && k != 13) {
+		return i + "rd";
+	}
+	return i + "th";
+}
 
 export const Home = () => {
 	const { store, actions } = useContext(Context);
-	console.log(store.clue_list);
 	return (
-		<div className="text-center mt-2 max-w-xl">
-			<p className="font-bold text-lg">Score: {store.round_score} / {store.clue_list.length}</p>
-			<div className="bg-white shadow overflow-hidden sm:rounded-lg m-10">
-				{renderClueDetails(store.clue_list[store.current_clue_index])}
-			</div>
+		<div className="text-center mt-2">
+		  <div className="inline-block w-full max-w-xl">
 			<div className="bg-white shadow overflow-hidden sm:rounded-lg m-10">
 				{renderSettings()}
 			</div>
+			<div className="bg-white shadow overflow-hidden sm:rounded-lg m-10">
+				{renderClueDetails(store.clue_list[store.current_clue_index])}
+			</div>
+		  </div>
 		</div>
 	);
 };
@@ -27,66 +52,80 @@ const renderSettings = () => {
 	const resetRound = () => {
 		actions.loadClueList();
 	}
+	function valuetext(value) {
+		return `${value}°C`;
+	}
+	const marks = [
+		{
+			value: 0,
+			label: '1',
+		},
+		{
+			value: 1,
+			label: '10',
+		},
+		{
+			value: 2,
+			label: '100',
+		},
+		{
+			value: 3,
+			label: '1,000',
+		},
+		{
+			value: 4,
+			label: '10,000',
+		},
+	]
+
+	const handleChange2 = (event, newValue, activeThumb) => {
+		if (!Array.isArray(newValue)) {
+		  return;
+		}
+	
+		const minDistance = 1 // 1 order of magnitude
+		if (newValue[1] - newValue[0] < minDistance) {
+		  if (activeThumb === 0) {
+			const clamped = Math.min(newValue[0], 4 - minDistance);
+			actions.setMinAnswerRank(10**(clamped))
+			actions.setMaxAnswerRank(10**(clamped+minDistance))
+		  } else {
+			const clamped = Math.max(newValue[1], minDistance);
+			actions.setMinAnswerRank(10**(clamped-minDistance))
+			actions.setMaxAnswerRank(10**(clamped))
+		  }
+		} else {
+			actions.setMinAnswerRank(10**(newValue[0]))
+			actions.setMaxAnswerRank(10**(newValue[1]))
+		}
+	  };
+
+	function calculateValue(value) {
+		return 10 ** value;
+	}
+
 	return (
 		<div>
-  		<div className="font-semibold text-lg mt-3">Settings</div>
+  		<div className="font-semibold text-lg mt-3">Clue Selection</div>
 		<div className="ml-6 mr-6 mb-6 mt-2">
 		<form>
 			<div className="mt-2">
-				<div className="relative">
-				  <span className="absolute -bottom-4 left-0 font-light text-sm">10</span>
-            	  <label htmlFor="top_x_answers" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-					Selection: <span className="font-light">{store.top_x_answers} most common answers</span>
-				  </label>
-				  <span className="absolute -bottom-4 right-0 font-light text-sm">10,000</span>
-				</div>
-				<input // Log scale
-				  id="top_x_answers"
-				  type="range"
-				  min="1" // ie. 10
-				  max="4" // ie. 10,000
-				  step="1" // This is one order of magnitude
-				  value={Math.log10(store.top_x_answers)}
-				  onInput={e => actions.setTopXAnswers(Math.floor(10**e.target.value))}
-				  onChange={e => actions.setTopXAnswers(Math.floor(10**e.target.value))}
-				  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
-        	</div>
-			<div className="mt-2">
-				<div className="relative">
-				  <span className="absolute -bottom-4 left-0 font-light text-sm">5</span>
-            	  <label htmlFor="round_size" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-					Round size: <span className="font-light">{store.round_size} clues</span>
-				  </label>
-				  <span className="absolute -bottom-4 right-0 font-light text-sm">30</span>
-				</div>
-				<input
-				  id="round_size"
-				  type="range"
-				  min="5"
-				  max="30"
-				  step="5"
-				  onInput={e => actions.setRoundSize(e.target.value)}
-				  onChange={e => actions.setRoundSize(e.target.value)}
-				  value={store.round_size}
-				  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
-        	</div>
-			<div className="mt-2">
-				<div className="relative">
-				  <span className="absolute -bottom-4 left-0 font-light text-sm">1993</span>
-				  <label htmlFor="start_year" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-					Start year: <span className="font-light">{store.start_year}</span>
-				  </label>
-				  <span className="absolute -bottom-4 right-0 font-light text-sm">2022</span>
-				</div>
-				<input
-				  id="start_year"
-				  type="range"
-				  min="1993"
-				  max="2022"
-				  onInput={e => actions.setStartYear(e.target.value)}
-				  onChange={e => actions.setStartYear(e.target.value)}
-				  value={store.start_year}
-				  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+            	<label htmlFor="answer_rank" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+  					<span className="font-light">
+						{addOrdinalSuffix(store.min_answer_rank)} to {addOrdinalSuffix(store.max_answer_rank)} most common answers
+					</span>
+				</label>
+				<Slider
+        			getAriaLabel={() => 'Minimum distance'}
+        			value={[Math.log10(store.min_answer_rank), Math.log10(store.max_answer_rank)]}
+        			valueLabelDisplay="off"
+        			getAriaValueText={valuetext}
+					onChange={handleChange2}
+				    min={0} // ie. 1
+				    max={4} // ie. 10,000
+					marks={marks}
+        			disableSwap
+      			/>
 			</div>
 		</form>
        	<button 
@@ -102,31 +141,6 @@ const renderSettings = () => {
 
 const renderClueDetails = (clueDetails) => {
 	const { store, actions } = useContext(Context);
-	const addOrdinalSuffix = (i) => {
-		var j = i % 10,
-			k = i % 100;
-		if (j == 1 && k != 11) {
-			return i + "st";
-		}
-		if (j == 2 && k != 12) {
-			return i + "nd";
-		}
-		if (j == 3 && k != 13) {
-			return i + "rd";
-		}
-		return i + "th";
-	}
-
-	const weekday_names = {
-		1: 'Monday',
-		2: 'Tuesday',
-		3: 'Wednesday',
-		4: 'Thursday',
-		5: 'Friday',
-		6: 'Saturday',
-		7: 'Sunday'
-	};
-
 	console.log('Rendering clueDetails', JSON.stringify(clueDetails));
 	return clueDetails === undefined ? 
 	    <div className="m-3">
@@ -134,18 +148,33 @@ const renderClueDetails = (clueDetails) => {
 		</div>
 	    :
 		<div className="m-3">
-          <p className="font-semibold text-lg">{clueDetails.clue}</p>
+		  <div className="mt-2 flex">
+			<div className="">
+			  <span className="font-bold text-xl text-gray-400">Clue {store.current_clue_index+1}</span>
+			  <span className="font-normal text-gray-400"> of 10</span>
+			</div>
+		  </div>
+		  <div className="flex">
+			<div>
+			  <ImCheckmark className="fill-green-400 w-5 inline scale-75"/>
+			  <span className="text-sm text-gray-400">{store.correct}</span>
+			</div>
+			<div className="ml-1">
+			  <ImCross className="fill-red-400 w-5 inline scale-75"/>
+			  <span className="text-sm text-gray-400">{store.wrong}</span>
+			</div>
+		  </div>
+          <p className="font-semibold text-xl">{clueDetails.clue}</p>
           <p className="font-thin">{weekday_names[clueDetails.weekday]}, {clueDetails.year}</p>
 		  {renderInput(clueDetails.answer)}
 		  {store.current_clue_status !== "unsubmitted" && 
-		    <div className="m-3">
+		    <div className="mt-3 mb-3 mr-2 ml-2">
 			  <span className="font-semibold">
 			    {store.current_clue_status == "correct" && <ImCheckmark className="fill-green-400 w-10 inline"/>}
 			    {store.current_clue_status == "wrong" && <ImCross className="fill-red-400 w-10 inline" />}
 				{clueDetails.answer}
 			  </span>	
-		      <span className="font-thin ml-3">Clue from {clueDetails.year}-{String(clueDetails.month).padStart(2, '0')}-{String(clueDetails.day).padStart(2, '0')},</span>
-			  <span className="font-thin ml-3">{clueDetails.index}</span>
+		      <span className="font-thin ml-3">{clueDetails.year}-{String(clueDetails.month).padStart(2, '0')}-{String(clueDetails.day).padStart(2, '0')}, {clueDetails.index}</span>
 			  <br />
 			  <span className="font-thin ml-3">{addOrdinalSuffix(clueDetails.answer_rank)} most common answer</span>
 			</div>}
@@ -171,10 +200,11 @@ const renderInput = (answer) => {
 		const proposed_answer = pinFieldRef.current.map(i => i.value).join("").toUpperCase();
 		if (proposed_answer == answer.toUpperCase()) {
 			console.log('correct!', proposed_answer, answer);
-			actions.incrementScore();
+			actions.incrementCorrect();
 			actions.setCurrentClueStatus("correct");
 		} else {
 			console.log('wrong!', proposed_answer, answer);
+			actions.incrementWrong();
 			actions.setCurrentClueStatus("wrong");
 		}
 	}
