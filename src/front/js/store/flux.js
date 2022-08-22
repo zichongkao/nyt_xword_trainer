@@ -6,7 +6,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			current_clue_index: 0, // integer between 0 and len(clue_list)-1 recording index of clue in play.
 			current_clue_status: "unsubmitted", // one of {"unsubmitted", "correct", "wrong"}
 			clue_list: [],
-			is_loading: false,
+			is_loading: true,
 			// Round Settings
 			round_size: 10, // tracked here, but can't be changed anywhere.
 			min_answer_rank: 1,

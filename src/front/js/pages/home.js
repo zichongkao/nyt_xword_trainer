@@ -137,12 +137,17 @@ const renderSettings = () => {
 
 const renderClueDetails = (clueDetails) => {
 	const { store, actions } = useContext(Context);
-	console.log('Rendering clueDetails', JSON.stringify(clueDetails));
-	return clueDetails === undefined ? 
-	    <div className="m-3">
-        	<p className="font-semibold text-lg mt-3">{ store.is_loading ? "Loading... " : "No clues match the criteria"}</p>
+	// console.log('Rendering clueDetails', JSON.stringify(clueDetails));
+	if (store.is_loading) {
+		return <div className="m-3">
+        	<p className="font-semibold text-lg mt-3">{  "Loading... " }</p>
 		</div>
-	    :
+	}
+	return  clueDetails === undefined ? 
+		<div className="m-3">
+	        <p className="font-semibold text-lg mt-3">"No clues match the criteria"</p>
+		</div>
+		:
 		<div className="m-3">
 		  <div className="mt-2 flex justify-between">
 			<div className="">

@@ -9,4 +9,5 @@ import "../styles/index.scss";
 import Layout from "./layout";
 
 //render your react application
+console.log('erhe')
 ReactDOM.render(<Layout />, document.querySelector("#app"));
