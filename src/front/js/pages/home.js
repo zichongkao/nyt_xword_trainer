@@ -256,6 +256,7 @@ const renderInput = (answer) => {
 		  length={answer.length}
 		  format={k => k.toUpperCase()}
 		  key={answer}
+		  onKeyPress={e => (e.key==="Enter") ? checkAnswer() : false}
 		  autoFocus
 		/>
 		<br/>
